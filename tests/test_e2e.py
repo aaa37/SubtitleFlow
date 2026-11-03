@@ -2,7 +2,6 @@ import json
 import os
 import re
 import shutil
-import subprocess
 from pathlib import Path
 import pytest
 from subtitleflow.asr import WhisperAdapter
@@ -12,7 +11,7 @@ from subtitleflow.models import ModelManager
 
 
 @pytest.mark.e2e
-def test_real_speech_video_to_three_formats(tmp_path):
+def test_real_speech_video_to_three_formats(tmp_path, make_video):
     binary=os.environ.get("SF_WHISPER_BIN")
     model=os.environ.get("SF_MODEL_BASE")
     speech=os.environ.get("SF_TEST_SPEECH")
@@ -27,8 +26,7 @@ def test_real_speech_video_to_three_formats(tmp_path):
     models.folder.mkdir(parents=True)
     shutil.copyfile(model,models.path("base"))
     source=tmp_path/("中文 视频 含空格 "+"长"*35+".mp4")
-    subprocess.run([ffmpeg,"-v","error","-f","lavfi","-i","color=c=black:s=64x64:r=5", "-i",speech,
-                    "-shortest","-c:v","mpeg4","-c:a","aac",str(source)],check=True)
+    make_video(source, speech)
     engine=BatchEngine(MediaAdapter(Path(ffmpeg),Path(ffprobe)),WhisperAdapter(Path(binary)),models)
     job=Job(source)
     engine.run([job],tmp_path/"中文 输出","base","en",["srt","vtt","txt"],lambda j:None,lambda *x:None)
@@ -67,7 +65,7 @@ def test_real_small_multilingual_model(tmp_path):
 @pytest.mark.e2e
 @pytest.mark.parametrize('key',['base','small'])
 @pytest.mark.parametrize('language',['zh','auto'])
-def test_real_chinese_video(tmp_path,key,language):
+def test_real_chinese_video(tmp_path,key,language,make_video):
     binary=os.environ.get('SF_WHISPER_BIN')
     model=os.environ.get('SF_MODEL_BASE' if key=='base' else 'SF_MODEL_SMALL')
     if not binary or not model:
@@ -76,8 +74,7 @@ def test_real_chinese_video(tmp_path,key,language):
     ffmpeg=shutil.which('ffmpeg')
     ffprobe=shutil.which('ffprobe')
     source=tmp_path/'中文 真人语音 测试.mp4'
-    subprocess.run([ffmpeg,'-v','error','-f','lavfi','-i','color=s=64x64:r=5','-i',str(fixture),
-        '-shortest','-c:v','mpeg4','-c:a','aac',str(source)],check=True)
+    make_video(source, fixture)
     models=ModelManager(tmp_path/'模型')
     models.folder.mkdir(parents=True)
     shutil.copyfile(model,models.path(key))

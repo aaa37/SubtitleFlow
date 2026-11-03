@@ -78,3 +78,6 @@ class MediaAdapter:
             raise Cancelled()
         if not target.is_file() or target.stat().st_size <= 44:
             raise AppError("音频提取结果为空，请检查文件的音轨。")
+        # Packet timestamps may end before the final sample. Only mark complete
+        # after the process succeeds and its actual output has been validated.
+        progress(100)

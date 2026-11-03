@@ -1,5 +1,5 @@
 import shutil
-import subprocess
+import wave
 import sys
 import threading
 import time
@@ -35,8 +35,9 @@ def tools():
 def test_actual_extract_chinese_path(tmp_path):
     media=tools()
     src=tmp_path/"中文 音频.wav"
-    subprocess.run([str(media.ffmpeg),"-v","error","-f","lavfi","-i","sine=frequency=440:duration=1",
-                    str(src)],check=True)
+    with wave.open(str(src), 'wb') as wav:
+        wav.setparams((1, 2, 16000, 0, 'NONE', 'not compressed'))
+        wav.writeframes(b'\x01\x00' * 16000)
     info=media.probe(src,threading.Event())
     assert info.audio and info.duration==pytest.approx(1,abs=.05)
     progress=[]
@@ -46,11 +47,25 @@ def test_actual_extract_chinese_path(tmp_path):
 
 
 @pytest.mark.integration
-def test_no_audio_corrupt_empty(tmp_path):
+def test_actual_video_extract_chinese_path(tmp_path, make_video):
+    media = tools()
+    speech = Path(__file__).parent / 'fixtures/fleurs-cmn-test-1906.wav'
+    src = make_video(tmp_path / '中文 视频.mp4', speech)
+    cancel = threading.Event()
+    info = media.probe(src, cancel)
+    assert info.audio and info.duration > 1
+    target = tmp_path / '中文 提取.wav'
+    media.extract(src, target, info, cancel, lambda progress: None)
+    with wave.open(str(target), 'rb') as wav:
+        assert wav.getnchannels() == 1 and wav.getframerate() == 16000
+        assert wav.getnframes() / wav.getframerate() == pytest.approx(info.duration, abs=.3)
+
+
+@pytest.mark.integration
+def test_no_audio_corrupt_empty(tmp_path, make_video):
     media=tools()
     src=tmp_path/"静音.mp4"
-    subprocess.run([str(media.ffmpeg),"-v","error","-f","lavfi","-i","color=s=32x32:d=1",
-                    "-c:v","mpeg4",str(src)],check=True)
+    make_video(src)
     info=media.probe(src,threading.Event())
     assert not info.audio
     with pytest.raises(AppError,match="没有音轨"):
@@ -82,7 +97,7 @@ def test_real_process_cancel_reaps(tmp_path):
 
 def test_safe_argument_array(tmp_path):
     value="中文 空格; $() ' \""
-    out=ProcessRunner().run(Path(sys.executable),["-c","import sys;print(sys.argv[1])",value],threading.Event())
+    out=ProcessRunner().run(Path(sys.executable),["-X","utf8","-c","import sys;print(sys.argv[1])",value],threading.Event())
     assert out==value
 
 
