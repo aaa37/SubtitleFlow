@@ -1,10 +1,15 @@
 {
   "windows10_clean_machine": false,
   "windows11_clean_machine": false,
-  "packaged_real_asr": false,
+  "packaged_real_asr": true,
   "qt_replaceability_test": false,
   "licenses_and_sources_reviewed": false,
   "commercial_terms_reviewed": false,
   "support_contact": "",
-  "source_offer_url": ""
+  "source_offer_url": "",
+  "packaged_real_asr_evidence": {
+    "run_id": 41595322843,
+    "commit": "fa0fdb5dc39fb93f3d53f521c0c8caa205c40081",
+    "exe_sha256": "db71102a4fc203e054c167fd1f1e28bc60602b02e6a8205ae88ce758c0e039b1"
+  }
 }

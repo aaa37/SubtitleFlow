@@ -1,3 +1,21 @@
+# 0.1.1 测试记录
+
+## 最新 Windows 实测（2026-11-03）
+
+提交 fa0fdb5dc39fb93f3d53f521c0c8caa205c40081，Actions 41595322843 全部成功。
+
+- 基础/集成：53 passed，7 deselected，2.85 秒。
+- 真实 E2E：7 passed，53 deselected，1051.11 秒；模型与真实中英文输入，非 Mock。
+- 冻结 EXE：原生 Windows GUI smoke 与真实语音转 SRT/VTT/TXT 通过；最终 EXE 哈希 db71102a4fc203e054c167fd1f1e28bc60602b02e6a8205ae88ce758c0e039b1。
+- ZIP 已生成，完整性与 SHA-256 检查通过，见 DELIVERY_REPORT.md。
+- 原始 JUnit、smoke、冻结 ASR、中英文转写记录及实际文件清单保存在 reports/windows-run4/。
+
+环境是 Windows Server 2022 runner，并不替代干净 Windows 10/11 用户端测试。动态库替换、签名和最终销售审查未完成。
+
+## 以下为此前 Linux 开发阶段记录
+
+以下段落中的「本轮」「尚未验证」均指当时的 Linux 开发阶段，当前 Windows CI 状态以上述新记录为准。
+
 # 0.1.1 测试记录说明
 
 最终测试数据见 reports/current-full-tests.xml 和当前 reports 中的 JSON。上一版 0.1.0 的原始证据保存在 reports/0.1.0，不将旧测试冒充新版本结果。

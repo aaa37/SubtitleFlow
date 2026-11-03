@@ -1,35 +1,32 @@
-# 字幕工坊 0.1.1 交付状态
+# 字幕工坊 0.1.1 Windows 候选包交付
 
-当前为可上传 GitHub 构建的发行加固候选工程，**不是已完成销售验收的 Windows 成品**。用户自行上传 GitHub，不继续登录或代操作账号。
+2026-11-03，实际 Windows 构建已通过。测试代码提交：fa0fdb5dc39fb93f3d53f521c0c8caa205c40081。
 
-## 本轮完成
+运行：https://github.com/aaa37/SubtitleFlow/actions/runs/41595322843
+产物：SubtitleFlow-0.1.1-windows-x64-candidate.zip，148222887 字节。
+ZIP SHA-256：9b04093b45c9092a420d8da6c0511f1772f711637bb1eca082ef2718e07279f5
+EXE SHA-256：db71102a4fc203e054c167fd1f1e28bc60602b02e6a8205ae88ce758c0e039b1
 
-- 字幕编辑保存原始文件的完整字节备份；一个输出写入失败时回滚已写入文件，避免只改成功一部分。
-- 单实例锁保护本机配置和历史；后台导入/模型准备与开始转写互斥。
-- 防止字幕取整后出现零时长；取消等待任务正确计入整体结束数量并写历史。
-- whisper.cpp 使用官方 1.9.5、FFmpeg 使用官方 n7.1.5 源码和固定 SHA-256。
-- QtBase、QtSvg、PySide/Shiboken 对应源码的固定哈希下载及随包交付，保留应用源码重建材料。
-- 新增 x64 PE、Qt DLL 模块白名单及与最终 EXE 哈希绑定的真实冻结测试证据检查。
-- Windows 工作流先执行编译、GUI smoke、真实 base/small 中英文识别与冻结转写，成功后才制作候选 ZIP。
-- 更新商用文档和 Windows 验收脚本，增加上传操作说明。
-- 修复组合回归中暴露的线程退出崩溃；单一 TaskThread、退出同步和非阻塞错误弹窗经过回归。
+## 已核实
 
-测试：57 项完整组合通过；新增弹窗回归后 51 项基础测试通过，另有真实 GUI 补测。详见 TEST_REPORT.md。
+- Windows Server 2022 x64 runner 实际从官方固定源码编译 FFmpeg 和 whisper.cpp。
+- 53 项基础/集成测试通过；7 项真实 ASR 测试通过（中英文、base/small、自动检测、GUI）。
+- PyInstaller onedir EXE 在原生 Windows Qt 平台启动、图标/文档检查通过。
+- 冻结 EXE 实际转写生成非空 SRT/VTT/TXT，证据与最终 EXE 哈希一致。
+- ZIP 完整性检查与 SHA-256 校验通过；Qt DLL 为 Core/Gui/Widgets/Svg。
+- 候选包携带 FFmpeg/whisper.cpp、QtBase/QtSvg/PySide 对应源码归档。
+- 原始测试记录与证据存于 reports/windows-run4/；不把此前失败轮次计为成功。
 
-## 用户下一步
+## 使用
 
-见 docs/上传与自动构建.md。上传解压后的所有工程内容到自己的私有 GitHub 仓库根目录，确认 .github/workflows/windows.yml 存在。不要只上传 ZIP，也不要多套一层目录。
+下载候选 ZIP，解压整个 SubtitleFlow 文件夹，双击 SubtitleFlow.exe。首次在「模型管理」下载或导入 base/small 多语言模型；模型准备完成后导入音视频，选择语言、输出目录与格式，开始生成。客户无需安装 Python。
 
-main 分支推送后运行 Windows candidate build and real transcription；成功后在 Artifacts 下载 Windows 候选 ZIP、SHA-256 和测试证据。失败时提供 Actions 运行链接或 build-diagnostics，继续定位修复。
+## 尚未完成的销售验收
 
-## 仍未完成
+这是已通过 CI 的 Windows 候选包，仍保留候选版标识，不能据此直接宣称商业销售验收完成。
 
-没有 Windows runner 实测结果，尚无 Windows EXE/ZIP。Windows 10/11 用户端兼容性、超长路径、高 DPI、动态库替换、最终运行库许可清单和真实销售条款均需完成。未签名，不承诺已具备代码签名或防拷贝机制。release-review.json 的未完成项仍保持 false。
+- 干净 Windows 10/11 客户系统的人工全流程、高 DPI、超长/中文用户名路径、取消、坏文件、离线重启验收。
+- 最终 DLL/间接依赖通知审查、Qt 库替换测试、发行条款确认。
+- 真实客服联系方式。代码签名尚未完成，不提供关闭防护的使用指导。
 
-## 保留的产品限制
-
-识别会错字、漏字、可能输出繁体或幻觉，须人工复核。没有断点续传、外部 SRT 导入、视频预览、字幕烧录、说话人分离、自动样式或在线授权。多文件保存不能抵抗所有断电场景；正常写入失败提供回滚和原始备份。
-
-## 下一版
-
-术语及简繁规范、字幕分段规则、批量时间偏移与质量检查。当前版本应先完成 Windows 构建验收，再推进增强功能。
+release-review.json 仅将已由本轮证据支持的 packaged_real_asr 标记为 true，其余未验收项保持 false。正式包仍受 --sale 门禁约束。当前没有支付、账号、DRM 或自动授权功能。
