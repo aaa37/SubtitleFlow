@@ -24,6 +24,9 @@ def main() -> None:
     root = Path(__file__).resolve().parents[1]
     bundle = root / "dist/SubtitleFlow"
     executable = bundle / "SubtitleFlow.exe"
+    # Preserve the complete DLL inventory even if a subsequent audit blocks ZIP creation.
+    from check_release import main as inventory
+    inventory()
     require_x64_pe(executable)
     modules = audit_qt_modules(bundle)
     if args.sale:
@@ -72,7 +75,6 @@ def main() -> None:
         marker.unlink(missing_ok=True)
     else:
         marker.write_text("候选构建：Windows 真机验收与最终发行审查未完成，不得作为已验证正式版发售。\n", encoding="utf-8")
-    from check_release import main as inventory
     inventory()
     mode = "release" if args.sale else "candidate"
     prefix = root / "dist" / f"SubtitleFlow-{__version__}-windows-x64-{mode}"

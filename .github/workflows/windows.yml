@@ -98,3 +98,8 @@ jobs:
             .work/sources/FFmpeg-*/ffbuild/config.log
             .work/*tests.xml
             build/SubtitleFlow/warn-SubtitleFlow.txt
+            dist/file-inventory.json
+            .work/windows-smoke.json
+            .work/windows-e2e.json
+            .work/chinese-*.json
+            .work/frozen-e2e/

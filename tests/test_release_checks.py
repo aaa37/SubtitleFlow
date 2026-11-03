@@ -43,10 +43,11 @@ def test_incomplete_evidence_cannot_authorize_windows_sale(tmp_path):
         verify_frozen_evidence(proof,exe)
 
 
-def test_unreviewed_qt_dll_rejected(tmp_path):
+@pytest.mark.parametrize('module', ['Qt6Charts.dll', 'Qt6Network.dll'])
+def test_unreviewed_qt_dll_rejected(tmp_path, module):
     for name in ['Qt6Core.dll','Qt6Gui.dll','Qt6Widgets.dll']:
         (tmp_path/name).touch()
     assert len(audit_qt_modules(tmp_path))==3
-    (tmp_path/'Qt6Charts.dll').touch()
+    (tmp_path/module).touch()
     with pytest.raises(AppError,match='未审查'):
         audit_qt_modules(tmp_path)
