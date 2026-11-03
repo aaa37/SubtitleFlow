@@ -1,0 +1,25 @@
+{
+  "model": "base",
+  "language": "auto",
+  "state": "已完成",
+  "duration": 10.38,
+  "transcript": "這並不是告別這是一個偏章的結束也是新偏章的開始",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 3.0,
+      "text": "這並不是告別"
+    },
+    {
+      "start": 3.0,
+      "end": 5.0,
+      "text": "這是一個偏章的結束"
+    },
+    {
+      "start": 5.0,
+      "end": 7.0,
+      "text": "也是新偏章的開始"
+    }
+  ],
+  "source": "Google FLEURS cmn_hans_cn/test id=1906, CC BY 4.0"
+}

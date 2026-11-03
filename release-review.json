@@ -1,0 +1,10 @@
+{
+  "windows10_clean_machine": false,
+  "windows11_clean_machine": false,
+  "packaged_real_asr": false,
+  "qt_replaceability_test": false,
+  "licenses_and_sources_reviewed": false,
+  "commercial_terms_reviewed": false,
+  "support_contact": "",
+  "source_offer_url": ""
+}

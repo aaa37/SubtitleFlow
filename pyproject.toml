@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools==75.8.2", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "subtitleflow"
+version = "0.1.1"
+description = "字幕工坊：离线批量字幕桌面软件"
+requires-python = ">=3.11,<3.14"
+dependencies = ["PySide6==6.8.3"]
+
+[project.optional-dependencies]
+dev = ["pytest==8.3.5", "pytest-qt==4.4.0", "ruff==0.11.2", "pyinstaller==6.12.0"]
+
+[project.gui-scripts]
+subtitleflow = "subtitleflow.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["e2e: requires real whisper.cpp and model", "integration: external media tools"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

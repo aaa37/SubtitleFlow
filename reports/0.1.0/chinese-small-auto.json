@@ -1,0 +1,15 @@
+{
+  "model": "small",
+  "language": "auto",
+  "state": "已完成",
+  "duration": 10.38,
+  "transcript": "这并不是告别,这是一个偏僵的结束,也是新偏僵的开始。",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 8.0,
+      "text": "这并不是告别,这是一个偏僵的结束,也是新偏僵的开始。"
+    }
+  ],
+  "source": "Google FLEURS cmn_hans_cn/test id=1906, CC BY 4.0"
+}

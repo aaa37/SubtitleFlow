@@ -1,0 +1,98 @@
+name: Windows candidate build and real transcription
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    env:
+      QT_QPA_PLATFORM: offscreen
+      SUBTITLEFLOW_HOME: '${{ github.workspace }}/.work/app-data'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          architecture: x64
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MSYS
+          path-type: inherit
+          install: make diffutils pkgconf
+          update: true
+      - name: Prepare exact source archives
+        shell: pwsh
+        run: |
+          python scripts/fetch_sources.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/fetch_legal_sources.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build LGPL-only FFmpeg from source using MSVC
+        shell: msys2 {0}
+        run: bash scripts/ffmpeg_msvc.sh
+      - name: Build application, test and smoke-test real Windows EXE
+        shell: pwsh
+        run: ./scripts/build_windows.ps1
+      - name: Synthesize original test speech and download verified multilingual models
+        shell: pwsh
+        run: |
+          python scripts/generate_media.py .work/speech.wav
+          python scripts/prepare_e2e_model.py
+      - name: Real Windows speech-to-subtitle integration
+        shell: pwsh
+        run: |
+          $env:PATH = "$PWD/vendor;$env:PATH"
+          $env:SF_WHISPER_BIN = "$PWD/vendor/whisper-cli.exe"
+          $env:SF_MODEL_BASE = "$PWD/.work/models/ggml-base.bin"
+          $env:SF_MODEL_SMALL = "$PWD/.work/models/ggml-small.bin"
+          $env:SF_TEST_SPEECH = "$PWD/.work/speech.wav"
+          $env:SF_EVIDENCE = "$PWD/.work/windows-e2e.json"
+          $env:SUBTITLEFLOW_REQUIRE_E2E = '1'
+          python -m pytest -q -m e2e --junitxml=.work/windows-e2e-tests.xml
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Test the frozen Python adapters using bundled binaries and real speech
+        shell: pwsh
+        run: |
+          $env:QT_QPA_PLATFORM = 'windows'
+          $env:SF_WHISPER_BIN = "$PWD/dist/SubtitleFlow/_internal/vendor/whisper-cli.exe"
+          $env:PATH = "$PWD/dist/SubtitleFlow/_internal/vendor;$env:PATH"
+          $proc = Start-Process -FilePath dist/SubtitleFlow/SubtitleFlow.exe -ArgumentList '--self-test', "$PWD/.work/speech.wav", "$PWD/.work/models/ggml-base.bin", "$PWD/.work/frozen-e2e" -PassThru
+          if (-not $proc.WaitForExit(600000)) { $proc.Kill(); throw 'Frozen ASR timed out' }
+          if ($proc.ExitCode -ne 0) { throw 'Frozen real ASR failed' }
+          if (-not (Test-Path .work/frozen-e2e/result.json)) { throw 'Frozen ASR evidence missing' }
+      - name: Package after actual frozen transcription
+        shell: pwsh
+        run: |
+          python scripts/package_release.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SubtitleFlow-windows-x64-candidate
+          path: |
+            dist/SubtitleFlow-*.zip
+            dist/SubtitleFlow-*.sha256
+            .work/*tests.xml
+            .work/windows-smoke.json
+            .work/windows-e2e.json
+            .work/chinese-*.json
+            dist/file-inventory.json
+            .work/frozen-e2e/
+          if-no-files-found: error
+      - name: Upload diagnostics even when build fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-diagnostics
+          path: |
+            .work/sources/FFmpeg-*/ffbuild/config.log
+            .work/*tests.xml
+            build/SubtitleFlow/warn-SubtitleFlow.txt

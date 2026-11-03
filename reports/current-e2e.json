@@ -1,0 +1,12 @@
+{
+  "source": "中文 视频 含空格 长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长.mp4",
+  "engine": "/workspace/scratch/bc544465d7aa/SubtitleFlow/.work/whisper-build/bin/whisper-cli",
+  "state": "已完成",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 8.32,
+      "text": "Hello, welcome to Subtitleflow. This is a local speech recognition test. We create subtitles on your computer."
+    }
+  ]
+}

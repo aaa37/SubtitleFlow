@@ -1,0 +1,14 @@
+{
+  "gui": "ok",
+  "resources": "/workspace/scratch/bc544465d7aa/SubtitleFlow/dist/SubtitleFlow/_internal",
+  "icon": true,
+  "docs": true,
+  "runtime": {
+    "platform": "linux",
+    "machine": "x86_64",
+    "frozen": true,
+    "version": "0.1.1",
+    "application_sha256": "e9757246b53d0a82c4bb41a515bafe19272117904ef850132d0852c0d9239707",
+    "qt_platform": "offscreen"
+  }
+}
