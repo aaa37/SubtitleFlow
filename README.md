@@ -2,7 +2,17 @@
 
 Windows 本地批量字幕工具。中文桌面界面；whisper.cpp + multilingual base/small；FFmpeg 提取；SRT/VTT/TXT 导出；无需账号或收费 AI API。
 
-**当前为 0.1.1 发行加固候选，Windows 构建及销售验收尚未完成。** 真实 Linux 转写与测试记录见 [TEST_REPORT.md](TEST_REPORT.md)。由用户自行上传 GitHub。请先阅读 [上传与自动构建](docs/上传与自动构建.md)，工作流尚未在 Windows 执行，不含 Windows EXE。
+Windows x64 的 GitHub Actions 构建已通过，并用打包后的程序实测了语音转写和 SRT、VTT、TXT 导出。查看 [构建记录](https://github.com/aaa37/SubtitleFlow/actions/runs/41595322843) 和 [测试报告](TEST_REPORT.md)。
+
+## 使用
+
+- 处理 MP4、MOV、MKV、MP3、WAV、M4A，支持批量导入、中文与英文识别、字幕编辑。
+- 下载 Windows 构建产物后，完整解压工具包并运行 `SubtitleFlow.exe`。构建产物如已过期，可以按 [构建指南](BUILDING.md) 重新生成。
+- 首次在软件内下载或导入多语言模型。模型就绪后，转写在本机完成。详见 [用户安装说明](docs/用户安装说明.md)。
+
+## 许可证
+
+本项目原创代码和文档按 [MIT 许可证](LICENSE) 发布。第三方组件、模型和测试素材按各自许可证使用，详见 [第三方许可声明](THIRD_PARTY_NOTICES.md) 和 [测试素材来源](tests/fixtures/README.md)。
 
 ## 开发
 

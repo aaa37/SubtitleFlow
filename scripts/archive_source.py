@@ -20,7 +20,7 @@ def main() -> None:
                 continue
             paths.append(file)
     paths.extend(p for p in root.iterdir() if p.is_file() and
-                 (p.suffix in {'.md','.toml','.txt','.json','.spec'} or p.name=='.gitignore'))
+                 (p.suffix in {'.md','.toml','.txt','.json','.spec'} or p.name in {'.gitignore', 'LICENSE'}))
     with zipfile.ZipFile(target,'w',zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(set(paths)):
             archive.write(path,Path('SubtitleFlow')/path.relative_to(root))

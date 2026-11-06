@@ -40,6 +40,7 @@ def main() -> None:
     legal = bundle / "OpenSource"
     sources = legal / "sources"
     sources.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(root / "LICENSE", bundle / "LICENSE")
     for path in [root / "THIRD_PARTY_NOTICES.md", root / "LICENSE_COMPLIANCE.md"]:
         shutil.copyfile(path, legal / path.name)
     for _key, (_url, digest, name) in ENGINE_SOURCES.items():
@@ -54,7 +55,10 @@ def main() -> None:
             for path in sorted((root / folder).rglob("*")):
                 if path.is_file() and "__pycache__" not in path.parts and not path.name.endswith(".pyc"):
                     archive.write(path, path.relative_to(root))
-        for name in ["pyproject.toml", "requirements-build.txt", "SubtitleFlow.spec", "BUILDING.md"]:
+        for name in [
+            "LICENSE", "THIRD_PARTY_NOTICES.md", "pyproject.toml",
+            "requirements-build.txt", "SubtitleFlow.spec", "BUILDING.md",
+        ]:
             archive.write(root / name, name)
     for name in ["用户安装说明.md", "售后与使用条款.md", "开源库替换说明.md"]:
         shutil.copyfile(root / "docs" / name, bundle / name)
